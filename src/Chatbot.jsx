@@ -280,6 +280,7 @@ const Chatbot = ({ apiEndpoint }) => {
             animation: "fadeIn 0.3s ease-in-out",
             marginBottom: "10px",
             overflow: "hidden",
+            backgroundColor: "white",
           }}
         >
           <div
@@ -292,7 +293,6 @@ const Chatbot = ({ apiEndpoint }) => {
               backgroundImage: `url(${chatbotData.backgroundLogo})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              zIndex: -2,
               opacity: 0.1,
             }}
           />
