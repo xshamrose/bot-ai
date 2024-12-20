@@ -130,6 +130,7 @@ const Chatbot = ({ apiEndpoint }) => {
   });
 
   const chatContainerRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const fetchChatbotConfig = async () => {
@@ -173,9 +174,15 @@ const Chatbot = ({ apiEndpoint }) => {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [chatHistory]);
 
-  const toggleChatbot = () => {
+    // Focus input when chat is opened
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [chatHistory, isOpen]);
+
+  const toggleChatbot = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
     setIsOpen(!isOpen);
   };
 
@@ -281,6 +288,7 @@ const Chatbot = ({ apiEndpoint }) => {
             marginBottom: "10px",
             overflow: "hidden",
             backgroundColor: "white",
+            zIndex: -2,
           }}
         >
           <div
@@ -294,6 +302,7 @@ const Chatbot = ({ apiEndpoint }) => {
               backgroundSize: "cover",
               backgroundPosition: "center",
               opacity: 0.1,
+              zIndex: -1,
             }}
           />
           <div
@@ -317,6 +326,7 @@ const Chatbot = ({ apiEndpoint }) => {
                 border: "none",
                 fontSize: "14px",
                 cursor: "pointer",
+                padding: "5px 10px",
               }}
             >
               X
@@ -353,6 +363,7 @@ const Chatbot = ({ apiEndpoint }) => {
             }}
           >
             <input
+              ref={inputRef}
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
