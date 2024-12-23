@@ -215,7 +215,7 @@ const Chatbot = ({ apiEndpoint }) => {
     setUserInput("");
 
     try {
-      const response = await fetch("http://192.168.1.9:5001/api/ask", {
+      const response = await fetch(process.env.REACT_APP_CHATBOT_API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

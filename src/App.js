@@ -2,7 +2,7 @@ import "./App.css";
 import Chatbot from "./Chatbot";
 
 function App() {
-  const apiEndpoint = "http://192.168.1.9:5001/api/chatbot-config";
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 
   return (
     <div className="App">
