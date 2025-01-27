@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { User, Bot } from "lucide-react";
+import { User, Bot, ArrowRight } from "lucide-react";
 
 const TypewriterText = ({ text, onComplete }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -116,6 +116,7 @@ const Message = ({ message, isTyping, isLastMessage }) => {
 
 const Chatbot = ({ apiEndpoint }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // New state for modal
   const [userInput, setUserInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [chatbotData, setChatbotData] = useState({
@@ -128,7 +129,12 @@ const Chatbot = ({ apiEndpoint }) => {
     loginUser: "",
     notificationCount: 0,
   });
-
+  const sampleData = [
+    { id: 1, title: "Data 1", content: "This is the content for data 1." },
+    { id: 2, title: "Data 2", content: "This is the content for data 2." },
+    { id: 3, title: "Data 3", content: "This is the content for data 3." },
+    { id: 1, title: "Data 1", content: "This is the content for data 1." },
+  ];
   const chatContainerRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -184,6 +190,12 @@ const Chatbot = ({ apiEndpoint }) => {
   const toggleChatbot = (e) => {
     e.stopPropagation(); // Prevent event bubbling
     setIsOpen(!isOpen);
+    setIsModalOpen(false);
+  };
+
+  const toggleModal = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setIsModalOpen(!isModalOpen);
   };
 
   const handleSendMessage = async () => {
@@ -394,6 +406,78 @@ const Chatbot = ({ apiEndpoint }) => {
         </div>
       )}
 
+      {isModalOpen && (
+        <div
+          onClick={toggleModal}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "350px", // Adjust this value to position the modal to the left of the chatbot
+            width: "450px", // Adjust the width as needed
+            height: "550px", // Adjust the height as needed
+            backgroundColor: "#fff",
+            borderTop: "1px solid #ddd",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            borderRadius: "10px",
+            zIndex: 1001,
+            // padding: "20px",
+            overflowY: "auto",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "rgb(56, 20, 68)",
+              color: "#fff",
+              padding: "10px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              position: "sticky",
+              top: 0, // Stick to top
+              zIndex: 2,
+            }}
+          >
+            <div>Pending Details</div>
+            <button
+              onClick={toggleModal}
+              style={{
+                backgroundColor: "transparent",
+                color: "#fff",
+                border: "none",
+                fontSize: "14px",
+                cursor: "pointer",
+                padding: "5px 10px",
+              }}
+            >
+              X
+            </button>
+          </div>
+          <p>{chatbotData.loginUser}</p>
+          {sampleData.map((data) => (
+            <div
+              key={data.id}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "5px",
+                padding: "10px",
+                margin: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease",
+              }}
+            >
+              <p>{data.content}</p>
+              <ArrowRight size={20} />
+            </div>
+          ))}
+        </div>
+      )}
+
       {!isOpen ? (
         <div
           onClick={toggleChatbot}
@@ -442,6 +526,7 @@ const Chatbot = ({ apiEndpoint }) => {
             }}
           >
             <div
+              onClick={toggleModal}
               style={{
                 width: "30px",
                 height: "30px",
@@ -451,6 +536,7 @@ const Chatbot = ({ apiEndpoint }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "relative",
+                cursor: "pointer",
               }}
             >
               👤
@@ -510,5 +596,402 @@ const Chatbot = ({ apiEndpoint }) => {
     </div>
   );
 };
+
+// export default Chatbot;const Chatbot = ({ apiEndpoint }) => {
+//   const [isOpen, setIsOpen] = useState(false);
+//   const [userInput, setUserInput] = useState("");
+//   const [chatHistory, setChatHistory] = useState([]);
+//   const [chatbotData, setChatbotData] = useState({
+//     topBorderColor: "#007bff",
+//     chatBotColor: "#fff",
+//     chatBotLogo: "",
+//     backgroundLogo: "",
+//     initialMsg: "Hi! How can I help you today?",
+//     topBorderTitle: "Chatbot",
+//     loginUser: "",
+//     notificationCount: 0,
+//   });
+
+//   const chatContainerRef = useRef(null);
+//   const inputRef = useRef(null);
+
+//   useEffect(() => {
+//     const fetchChatbotConfig = async () => {
+//       try {
+//         const response = await fetch(apiEndpoint);
+//         if (!response.ok) {
+//           throw new Error("Network response was not ok");
+//         }
+//         const data = await response.json();
+//         setChatbotData({
+//           topBorderColor: data.topBorderColor || "#007bff",
+//           chatBotColor: data.chatBotColor || "#fff",
+//           chatBotLogo: data.chatBotLogo || "",
+//           backgroundLogo: data.backgroundLogo || "",
+//           initialMsg: data.initialMsg || "Hi! How can I help you today?",
+//           topBorderTitle: data.topBorderTitle || "Chatbot",
+//           loginUser: data.loginUser || "",
+//           notificationCount: data.notificationCount || 0,
+//         });
+
+//         setChatHistory([
+//           {
+//             sender: "bot",
+//             message: data.initialMsg || "Hi! How can I help you today?",
+//             timestamp: new Date().toLocaleTimeString([], {
+//               hour: "2-digit",
+//               minute: "2-digit",
+//             }),
+//           },
+//         ]);
+//       } catch (error) {
+//         console.error("Failed to fetch chatbot configuration:", error);
+//       }
+//     };
+
+//     fetchChatbotConfig();
+//   }, [apiEndpoint]);
+
+//   useEffect(() => {
+//     if (chatContainerRef.current) {
+//       chatContainerRef.current.scrollTop =
+//         chatContainerRef.current.scrollHeight;
+//     }
+
+//     // Focus input when chat is opened
+//     if (isOpen && inputRef.current) {
+//       inputRef.current.focus();
+//     }
+//   }, [chatHistory, isOpen]);
+
+//   const toggleChatbot = (e) => {
+//     e.stopPropagation(); // Prevent event bubbling
+//     setIsOpen(!isOpen);
+//   };
+
+//   const handleSendMessage = async () => {
+//     if (userInput.trim() === "") return;
+
+//     const newUserMessage = {
+//       sender: "user",
+//       message: userInput,
+//       timestamp: new Date().toLocaleTimeString([], {
+//         hour: "2-digit",
+//         minute: "2-digit",
+//       }),
+//     };
+
+//     const thinkingMessage = {
+//       sender: "bot",
+//       message: "AI is thinking...",
+//       timestamp: new Date().toLocaleTimeString([], {
+//         hour: "2-digit",
+//         minute: "2-digit",
+//       }),
+//     };
+
+//     setChatHistory((prevHistory) => [
+//       ...prevHistory,
+//       newUserMessage,
+//       thinkingMessage,
+//     ]);
+//     setUserInput("");
+
+//     try {
+//       const response = await fetch(process.env.REACT_APP_CHATBOT_API, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ question: userInput }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+
+//       const data = await response.json();
+//       const botResponseMessage = {
+//         sender: "bot",
+//         message: data.answer || "I'm sorry, I couldn't process your request.",
+//         timestamp: new Date().toLocaleTimeString([], {
+//           hour: "2-digit",
+//           minute: "2-digit",
+//         }),
+//       };
+
+//       setChatHistory((prevHistory) => [
+//         ...prevHistory.slice(0, -1),
+//         botResponseMessage,
+//       ]);
+//     } catch (error) {
+//       console.error("Failed to send message:", error);
+//       const errorMessage = {
+//         sender: "bot",
+//         message: "I'm sorry, I couldn't process your request.",
+//         timestamp: new Date().toLocaleTimeString([], {
+//           hour: "2-digit",
+//           minute: "2-digit",
+//         }),
+//       };
+
+//       setChatHistory((prevHistory) => [
+//         ...prevHistory.slice(0, -1),
+//         errorMessage,
+//       ]);
+//     }
+//   };
+
+//   const handleKeyPress = (e) => {
+//     if (e.key === "Enter") {
+//       handleSendMessage();
+//     }
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         position: "fixed",
+//         bottom: "20px",
+//         right: "20px",
+//         zIndex: 1000,
+//       }}
+//     >
+//       {isOpen && (
+//         <div
+//           style={{
+//             position: "relative",
+//             borderRadius: "10px",
+//             width: "320px",
+//             height: "400px",
+//             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+//             display: "flex",
+//             flexDirection: "column",
+//             animation: "fadeIn 0.3s ease-in-out",
+//             marginBottom: "10px",
+//             overflow: "hidden",
+//             backgroundColor: "white",
+//             zIndex: -2,
+//           }}
+//         >
+//           <div
+//             style={{
+//               position: "absolute",
+//               top: 0,
+//               left: 0,
+//               right: 0,
+//               bottom: 0,
+//               backgroundImage: `url(${chatbotData.backgroundLogo})`,
+//               backgroundSize: "cover",
+//               backgroundPosition: "center",
+//               opacity: 0.1,
+//               zIndex: -1,
+//             }}
+//           />
+//           <div
+//             style={{
+//               backgroundColor: chatbotData.topBorderColor,
+//               color: "#fff",
+//               padding: "10px",
+//               fontSize: "16px",
+//               fontWeight: "bold",
+//               display: "flex",
+//               justifyContent: "space-between",
+//               alignItems: "center",
+//             }}
+//           >
+//             <div>{chatbotData.topBorderTitle}</div>
+//             <button
+//               onClick={toggleChatbot}
+//               style={{
+//                 backgroundColor: "transparent",
+//                 color: "#fff",
+//                 border: "none",
+//                 fontSize: "14px",
+//                 cursor: "pointer",
+//                 padding: "5px 10px",
+//               }}
+//             >
+//               X
+//             </button>
+//           </div>
+
+//           <div
+//             ref={chatContainerRef}
+//             style={{
+//               flex: 1,
+//               padding: "15px",
+//               fontSize: "14px",
+//               color: "#333",
+//               overflowY: "auto",
+//             }}
+//           >
+//             {chatHistory.map((chat, index) => (
+//               <Message
+//                 key={index}
+//                 message={chat}
+//                 isLastMessage={index === chatHistory.length - 1}
+//                 isTyping={chat.message === "AI is thinking..."}
+//               />
+//             ))}
+//           </div>
+
+//           <div
+//             style={{
+//               display: "flex",
+//               gap: "5px",
+//               padding: "10px",
+//               borderTop: "1px solid #ddd",
+//               backgroundColor: "#fff",
+//             }}
+//           >
+//             <input
+//               ref={inputRef}
+//               type="text"
+//               value={userInput}
+//               onChange={(e) => setUserInput(e.target.value)}
+//               onKeyPress={handleKeyPress}
+//               placeholder="Type your message..."
+//               style={{
+//                 flex: 1,
+//                 padding: "8px",
+//                 borderRadius: "5px",
+//                 border: "1px solid #ccc",
+//                 outline: "none",
+//               }}
+//             />
+//             <button
+//               onClick={handleSendMessage}
+//               style={{
+//                 backgroundColor: chatbotData.topBorderColor,
+//                 color: "#fff",
+//                 border: "none",
+//                 padding: "8px 12px",
+//                 borderRadius: "5px",
+//                 cursor: "pointer",
+//               }}
+//             >
+//               Send
+//             </button>
+//           </div>
+//         </div>
+//       )}
+
+//       {!isOpen ? (
+//         <div
+//           onClick={toggleChatbot}
+//           style={{
+//             backgroundColor: chatbotData.chatBotColor,
+//             color: "#fff",
+//             borderRadius: "50%",
+//             width: "60px",
+//             height: "60px",
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+//             cursor: "pointer",
+//           }}
+//         >
+//           {chatbotData.chatBotLogo ? (
+//             <img
+//               src={chatbotData.chatBotLogo}
+//               alt=""
+//               style={{ width: "40px", height: "40px", objectFit: "cover" }}
+//             />
+//           ) : (
+//             "💬"
+//           )}
+//         </div>
+//       ) : (
+//         <div
+//           style={{
+//             display: "flex",
+//             alignItems: "center",
+//             backgroundColor: chatbotData.topBorderColor,
+//             borderRadius: "10px",
+//             padding: "10px",
+//             gap: "10px",
+//             color: "#fff",
+//             marginTop: "10px",
+//           }}
+//         >
+//           <div
+//             style={{
+//               display: "flex",
+//               alignItems: "center",
+//               gap: "10px",
+//               flex: 1,
+//             }}
+//           >
+//             <div
+//               style={{
+//                 width: "30px",
+//                 height: "30px",
+//                 borderRadius: "50%",
+//                 backgroundColor: "rgba(255,255,255,0.2)",
+//                 display: "flex",
+//                 justifyContent: "center",
+//                 alignItems: "center",
+//                 position: "relative",
+//               }}
+//             >
+//               👤
+//               {chatbotData.notificationCount > 0 && (
+//                 <div
+//                   style={{
+//                     position: "absolute",
+//                     top: "-3px",
+//                     right: "-3px",
+//                     backgroundColor: "red",
+//                     color: "white",
+//                     borderRadius: "50%",
+//                     width: "15px",
+//                     height: "15px",
+//                     display: "flex",
+//                     justifyContent: "center",
+//                     alignItems: "center",
+//                     fontSize: "10px",
+//                     fontWeight: "bold",
+//                   }}
+//                 >
+//                   {chatbotData.notificationCount}
+//                 </div>
+//               )}
+//             </div>
+//             <div style={{ fontSize: "14px" }}>
+//               {chatbotData.loginUser || "Guest"}
+//             </div>
+//           </div>
+//           <div
+//             onClick={toggleChatbot}
+//             style={{
+//               backgroundColor: chatbotData.chatBotColor,
+//               color: "#fff",
+//               borderRadius: "50%",
+//               width: "40px",
+//               height: "40px",
+//               display: "flex",
+//               justifyContent: "center",
+//               alignItems: "center",
+//               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+//               cursor: "pointer",
+//             }}
+//           >
+//             {chatbotData.chatBotLogo ? (
+//               <img
+//                 src={chatbotData.chatBotLogo}
+//                 alt=""
+//                 style={{ width: "30px", height: "30px", objectFit: "cover" }}
+//               />
+//             ) : (
+//               "💬"
+//             )}
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
 
 export default Chatbot;
